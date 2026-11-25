@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Network Packet Analyzer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">COMPUTER NETWORKS MINI PROJECT</p>
+      <h1>Network Packet Analyzer</h1>
+      <p class="subtitle">Real-time packet capture and traffic monitoring</p>
+    </div>
+    <div id="status" class="status stopped"><span class="dot"></span><span>Stopped</span></div>
+  </header>
+
+  <main>
+    <section class="panel controls">
+      <div class="control-group interface-group">
+        <label for="interface">Network interface</label>
+        <select id="interface"><option value="">Default interface</option></select>
+      </div>
+      <div class="buttons">
+        <button id="startBtn" class="primary">▶ Start capture</button>
+        <button id="stopBtn" class="danger" disabled>■ Stop capture</button>
+        <button id="clearBtn" class="secondary">Clear packets</button>
+        <a class="button secondary" href="/api/export">Export CSV</a>
+      </div>
+      <p id="message" class="message">Use this tool only on networks and devices you are authorized to monitor.</p>
+    </section>
+
+    <section class="stats-grid">
+      <article class="stat-card"><span>Total packets</span><strong id="total">0</strong><small>Captured records</small></article>
+      <article class="stat-card"><span>TCP</span><strong id="tcp">0</strong><small>Transmission Control Protocol</small></article>
+      <article class="stat-card"><span>UDP</span><strong id="udp">0</strong><small>User Datagram Protocol</small></article>
+      <article class="stat-card"><span>Other / ICMP / ARP</span><strong id="other">0</strong><small>Other identified traffic</small></article>
+      <article class="stat-card"><span>Total bytes</span><strong id="bytes">0 B</strong><small>Captured packet sizes</small></article>
+      <article class="stat-card"><span>Average size</span><strong id="avg">0 B</strong><small>Bytes per packet</small></article>
+    </section>
+
+    <section class="charts-grid">
+      <article class="panel chart-panel">
+        <div class="panel-heading"><h2>Protocol distribution</h2><span>Current capture</span></div>
+        <div class="chart-container"><canvas id="protocolChart"></canvas></div>
+      </article>
+      <article class="panel chart-panel">
+        <div class="panel-heading"><h2>Traffic volume</h2><span>Recent captured packets</span></div>
+        <div class="chart-container"><canvas id="trafficChart"></canvas></div>
+      </article>
+    </section>
+
+    <section class="panel packet-panel">
+      <div class="panel-heading">
+        <div><h2>Captured packets</h2><p class="muted">Select a row to inspect its metadata.</p></div>
+        <span id="visibleCount" class="count-pill">0 packets</span>
+      </div>
+      <div class="filters">
+        <label>Protocol
+          <select id="protocolFilter">
+            <option>All</option><option>TCP</option><option>UDP</option>
+            <option>ICMP</option><option>ARP</option><option>IPv4</option><option>IPv6</option>
+          </select>
+        </label>
+        <label>Source or destination IP
+          <input id="ipFilter" type="text" placeholder="e.g. 192.168.1.10">
+        </label>
+        <button id="resetFilter" class="secondary">Reset filters</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>ID</th><th>Time</th><th>Source IP</th><th>Destination IP</th><th>Protocol</th><th>Source port</th><th>Destination port</th><th>Size</th></tr></thead>
+          <tbody id="packetRows"><tr><td colspan="8" class="empty">No packets yet. Start capture to begin.</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel detail-panel">
+      <div class="panel-heading"><h2>Selected packet details</h2><span class="muted">Metadata only</span></div>
+      <div id="details" class="details-grid"><p class="muted">Select a packet row to view details.</p></div>
+    </section>
+    <footer>Educational project • Captures only traffic visible to the selected interface • Packet payloads are not stored by this application</footer>
+  </main>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
